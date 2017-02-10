@@ -5,7 +5,9 @@ import speech_recognition as sr
 import ConfigParser
 import json
 import pyttsx
+import brain
 
+br = brain.brain()
 
 def ears():
 # obtain audio from the microphone
@@ -23,13 +25,18 @@ def ears():
 
     # recognize speech using Google Speech Recognition
     try:
-            return r.recognize_google_cloud(audio, credentials_json=json.dumps(json_key))
+            words = r.recognize_google_cloud(audio, credentials_json=json.dumps(json_key))
     except sr.UnknownValueError:
         print("Google Speech Recognition could not understand audio")
     except sr.RequestError as e:
         print(
             "Could not request results from Google Speech Recognition service; {0}".format(e))
-    return ""
+
+    if 'weather' in words:
+        wstats = br.get_weather()
+        return ("The temperature in fahrenheit is " + wstats[0] + " and it is going to be " + wstats[1])
+    else:
+        return None
 
 def mouth(text):
     speech_engine = pyttsx.init('espeak') # see http://pyttsx.readthedocs.org/en/latest/engine.html#pyttsx.init

@@ -63,3 +63,4 @@ target/
 
 Speech.json
 config.py
+__init__.py

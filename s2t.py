@@ -34,7 +34,7 @@ def ears():
 
     if 'weather' in words:
         wstats = br.get_weather()
-        return ("The temperature in fahrenheit is " + wstats[0] + " and it is going to be " + wstats[1])
+        return ("The temperature in fahrenheit is " + str(wstats[0][temp]) + " and it is going to be " + wstats[1])
     else:
         return None
 

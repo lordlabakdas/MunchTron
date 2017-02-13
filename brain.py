@@ -5,6 +5,11 @@ cf=ConfigParser.ConfigParser()
 cf.read('config.py')
 _owm_api_key_ = cf.get('owm', 'API_KEY')
 
+_twr_ck_ = cf.get('twitter', 'consumer_key')
+_twr_cs_ = cf.get('twitter', 'consumer_secret')
+_twr_ak_ = cf.get('twitter', "access_key")
+_twr_as_ = cf.get('twitter', 'access_secret')
+
 class brain:
 
     def get_weather(self):
@@ -16,3 +21,9 @@ class brain:
         print w.get_detailed_status()
         stats = [w.get_temperature('fahrenheit'), w.get_detailed_status()]
         return stats
+
+    def twitter(self, words):
+        auth = tweepy.OAuthHandler(ck,cs)
+        auth.set_access_token(ak,acs)
+        api = tweepy.API(auth)
+        tw = twitter.twitter(api)

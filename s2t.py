@@ -13,7 +13,7 @@ def parse_sentence(words):
         wstats = br.get_weather()
         return ("The temperature in fahrenheit is " + str(wstats[0]["temp"]) + " and it is going to be " + wstats[1])
     elif 'twitter'  or 'tweet' in words:
-        br.twitter(words)
+        return br.twitter(words)
     else:
         return None
 

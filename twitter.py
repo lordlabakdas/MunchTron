@@ -9,5 +9,8 @@ class twitter (object):
     def search(self,words):
         max_tweets = 2
         searched_tweets = [status for status in tweepy.Cursor(self.api.search, q=words).items(max_tweets)]
+        tweets = []
         for status in searched_tweets:
-            print status
+            print status.text
+            tweets.append(status.text)
+        return tweets

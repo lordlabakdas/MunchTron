@@ -30,4 +30,4 @@ class brain:
         api = tweepy.API(auth)
         tw = twitter.twitter(api)
         if "search" in words:
-            tw.search(words.replace('search',''))
+            return tw.search(words.replace('search',''))

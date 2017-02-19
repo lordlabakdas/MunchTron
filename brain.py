@@ -2,6 +2,7 @@ from pyowm import OWM
 import ConfigParser
 import tweepy
 import twitter
+import logging as log
 
 cf=ConfigParser.ConfigParser()
 cf.read('config.py')
@@ -31,3 +32,8 @@ class brain:
         tw = twitter.twitter(api)
         if "search" in words:
             return tw.search(words.replace('search',''))
+        elif "user" in words:
+            words.replace('user', '')
+            words.replace('twitter','')
+            log.info(words)
+            return tw.user_tweets(words)

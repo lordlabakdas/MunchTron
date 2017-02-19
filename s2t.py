@@ -15,6 +15,7 @@ def parse_sentence(words):
     elif 'twitter'  or 'tweet' in words:
         return br.twitter(words)
     else:
+        print None
         return None
 
 def ears():

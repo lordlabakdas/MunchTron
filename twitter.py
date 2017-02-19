@@ -14,3 +14,11 @@ class twitter (object):
             print status.text
             tweets.append(status.text)
         return tweets
+
+    def user_tweets(self,words):
+        timeline = self.api.user_timeline(screen_name=words, include_rts=True, count=1)
+        tweets = []
+        for status in timeline:
+            print status.text
+            tweets.append(status.text)
+        return tweets

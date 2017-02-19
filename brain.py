@@ -1,5 +1,7 @@
 from pyowm import OWM
 import ConfigParser
+import tweepy
+import twitter
 
 cf=ConfigParser.ConfigParser()
 cf.read('config.py')
@@ -23,7 +25,9 @@ class brain:
         return stats
 
     def twitter(self, words):
-        auth = tweepy.OAuthHandler(ck,cs)
-        auth.set_access_token(ak,acs)
+        auth = tweepy.OAuthHandler(_twr_ck_,_twr_cs_)
+        auth.set_access_token(_twr_ak_,_twr_as_)
         api = tweepy.API(auth)
         tw = twitter.twitter(api)
+        if "search" in words:
+            tw.search(words.replace('search',''))

@@ -5,9 +5,10 @@ import speech_recognition as sr
 import ConfigParser
 import json
 import pyttsx
-import brain
+from brain.brain import brain
 
-br = brain.brain()
+
+br = brain()
 
 
 def ears():
@@ -17,7 +18,7 @@ def ears():
         print("Say something!")
         r.adjust_for_ambient_noise(source)
         audio = r.listen(source)
-        return br.google_s2t_api(audio)
+        return br.google_s2t_api(audio, sr,r)
 
 def mouth(text):
     speech_engine = pyttsx.init('espeak') # see http://pyttsx.readthedocs.org/en/latest/engine.html#pyttsx.init

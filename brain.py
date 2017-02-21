@@ -37,3 +37,25 @@ class brain:
             words.replace('twitter','')
             log.info(words)
             return tw.user_tweets(words)
+
+    def google_s2t_api(audio):
+        with open('Speech.json') as json_file:
+            json_key = json.load(json_file)
+        try:
+                words = r.recognize_google_cloud(audio, credentials_json=json.dumps(json_key))
+                return parse_sentence(words)
+        except sr.UnknownValueError:
+            print("Google Speech Recognition could not understand audio")
+        except sr.RequestError as e:
+            print(
+                "Could not request results from Google Speech Recognition service; {0}".format(e))
+
+    def parse_sentence(words):
+        if 'weather' in words:
+            wstats = br.get_weather()
+            return ("The temperature in fahrenheit is " + str(wstats[0]["temp"]) + " and it is going to be " + wstats[1])
+        elif 'twitter'  or 'tweet' in words:
+            return br.twitter(words)
+        else:
+            print None
+            return None

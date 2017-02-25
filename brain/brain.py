@@ -7,6 +7,7 @@ from yelp.client import Client
 from yelp.oauth1_authenticator import Oauth1Authenticator
 import json
 from google.cloud import language
+import spotipy
 
 cf=ConfigParser.ConfigParser()
 cf.read('config.py')
@@ -95,4 +96,14 @@ class brain:
         text = "Some of the eateries are " + response.businesses[0].name + " and " + response.businesses[1].name
         print text
         return text
-        
+
+
+def spotify (self,words):
+    words.replace('play','')
+    sp = spotipy.Spotify()
+    results = sp.search(q='artist:' + words, type='artist')
+    items = results['artists']['items']
+    if len(items) > 0:
+        return items[0]
+    else:
+        return None

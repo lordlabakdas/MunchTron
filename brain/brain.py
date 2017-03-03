@@ -70,13 +70,18 @@ class brain:
 
 
     def parse_sentence(self, words):
+        print words + "parse_sentence"
         if 'weather' in words:
             wstats = self.get_weather()
             return ("The temperature in fahrenheit is " + str(wstats[0]["temp"]) + " and it is going to be " + wstats[1])
         elif 'twitter'  or 'tweet' in words:
             return self.twitter(words)
-        elif 'restaurants' or 'food' or 'eateries':
+        elif 'restaurants' or 'food' or 'eateries' in words:
+            print "yelp"
             return self.yelp(words)
+        elif "play" in words:
+            print "spotify"
+            self.spotify(words)
         else:
             print None
             return None
@@ -89,6 +94,7 @@ class brain:
                                 token_secret=cf.get('yelp','TokenSecret'))
         client = Client(auth)
         if 'around me' or 'near me' in words:
+            print "yelp"
             params = {
             "term": "food"
             }

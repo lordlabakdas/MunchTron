@@ -74,14 +74,15 @@ class brain:
         if 'weather' in words:
             wstats = self.get_weather()
             return ("The temperature in fahrenheit is " + str(wstats[0]["temp"]) + " and it is going to be " + wstats[1])
-        elif 'twitter'  or 'tweet' in words:
+        elif 'twitter'  in words or 'tweet' in words:
+            print "twitter"
             return self.twitter(words)
-        elif 'restaurants' or 'food' or 'eateries' in words:
+        elif 'restaurants' in words or 'food' in words:
             print "yelp"
             return self.yelp(words)
         elif "play" in words:
             print "spotify"
-            self.spotify(words)
+            return self.spotify(words)
         else:
             print None
             return None
@@ -99,17 +100,17 @@ class brain:
             "term": "food"
             }
             response = client.search('Lawrence', **params)
-        text = "Some of the eateries are " + response.businesses[0].name + " and " + response.businesses[1].name
+        text = "Some of the restaurants are " + response.businesses[0].name + " and " + response.businesses[1].name
         print text
         return text
 
 
-def spotify (self,words):
-    words.replace('play','')
-    sp = spotipy.Spotify()
-    results = sp.search(q='artist:' + words, type='artist')
-    items = results['artists']['items']
-    if len(items) > 0:
-        return items[0]
-    else:
-        return None
+    def spotify (self,words):
+        w = words.replace('do play ','')
+        sp = spotipy.Spotify()
+        results = sp.search(q='artist:' + w, type='artist')
+        items = results['artists']['items']
+        if len(items) > 0:
+            return items[0]["images"][0]['url']
+        else:
+            return None

@@ -8,6 +8,7 @@ from yelp.oauth1_authenticator import Oauth1Authenticator
 import json
 from google.cloud import language
 import spotipy
+import urllib
 
 cf=ConfigParser.ConfigParser()
 cf.read('config.py')
@@ -20,7 +21,7 @@ class brain:
         _owm_api_key_ = cf.get('owm', 'API_KEY')
         owm = OWM(API_key=_owm_api_key_)
         obs = owm.weather_at_place('Lawrence,US') # TODO: change hardcoded location
-        print obs
+        #print obs
         w = obs.get_weather()
         print w.get_temperature('fahrenheit')
         print w.get_detailed_status()
@@ -57,6 +58,8 @@ class brain:
                 "Could not request results from Google Speech Recognition service; {0}".format(e))
 
     def sentiment_analysis(self,words):
+        print("Inside sentiment_analysis function")
+        words = words.replace('do ', '')
         language_client = language.Client()
         document = language_client.document_from_text(words)
         entities = document.analyze_entities()
@@ -67,10 +70,11 @@ class brain:
             print('wikipedia_url: %s' % (entity.wikipedia_url,))
             print('     metadata: %s' % (entity.metadata,))
             print('     salience: %s' % (entity.salience,))
-
+            print('=' * 20)
 
     def parse_sentence(self, words):
         print words + "parse_sentence"
+        self.sentiment_analysis(words)
         if 'weather' in words:
             wstats = self.get_weather()
             return ("The temperature in fahrenheit is " + str(wstats[0]["temp"]) + " and it is going to be " + wstats[1])
@@ -86,6 +90,7 @@ class brain:
         else:
             print None
             return None
+
 
     def yelp(self, words):
         print "yelp"

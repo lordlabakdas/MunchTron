@@ -1,0 +1,24 @@
+import requests
+
+class SentenceParser():
+    def parse_sentence(self, words):
+        print words + "parse_sentence"
+        #self.sentiment_analysis(words)
+        if 'weather' in words:
+            print "weather"
+            #return self.get_weather()
+            result = requests.get("http://localhost:5000/weather").text
+            print result
+            return result
+        elif 'twitter'  in words or 'tweet' in words:
+            print "twitter"
+            return self.twitter(words)
+        elif 'restaurants' in words or 'food' in words:
+            print "yelp"
+            return self.yelp(words)
+        elif "play" in words:
+            print "spotify"
+            return self.spotify(words)
+        else:
+            print None
+            return None

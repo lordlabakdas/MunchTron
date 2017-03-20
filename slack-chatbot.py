@@ -3,6 +3,7 @@ import time
 from slackclient import SlackClient
 import ConfigParser
 from brain.brain import brain
+from brain.sentence_parser import SentenceParser
 
 cf = ConfigParser.ConfigParser()
 cf.read("config.py")
@@ -27,9 +28,9 @@ def handle_command(command, channel):
                "* command with numbers, delimited by spaces."
     if command.startswith(EXAMPLE_COMMAND):
         #response = "Sure...write some more code then I can do that!"
-        br = brain()
+        sp = SentenceParser()
         print command
-        response = br.parse_sentence(command)
+        response = sp.parse_sentence(command)
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
 

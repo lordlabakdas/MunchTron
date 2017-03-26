@@ -26,7 +26,8 @@ class brain:
         print w.get_temperature('fahrenheit')
         print w.get_detailed_status()
         stats = [w.get_temperature('fahrenheit'), w.get_detailed_status()]
-        return stats
+        words = "The temperature in fahrenheit is " + str(stats[0]["temp"]) + " and it is going to be " + stats[1]
+        return words
 
     def twitter(self, words):
         _twr_ck_ = cf.get('twitter', 'consumer_key')
@@ -71,25 +72,6 @@ class brain:
             print('     metadata: %s' % (entity.metadata,))
             print('     salience: %s' % (entity.salience,))
             print('=' * 20)
-
-    def parse_sentence(self, words):
-        print words + "parse_sentence"
-        self.sentiment_analysis(words)
-        if 'weather' in words:
-            wstats = self.get_weather()
-            return ("The temperature in fahrenheit is " + str(wstats[0]["temp"]) + " and it is going to be " + wstats[1])
-        elif 'twitter'  in words or 'tweet' in words:
-            print "twitter"
-            return self.twitter(words)
-        elif 'restaurants' in words or 'food' in words:
-            print "yelp"
-            return self.yelp(words)
-        elif "play" in words:
-            print "spotify"
-            return self.spotify(words)
-        else:
-            print None
-            return None
 
 
     def yelp(self, words):

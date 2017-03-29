@@ -7,7 +7,11 @@ class SentenceParser():
         #self.sentiment_analysis(words)
         words = {"sentence":words}
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        if 'weather' in words:
+
+        with open ('data/weather/weather.json') as json_data:
+            weather_json = json.load(json_data)
+        #if 'weather' in words:
+        if any(x in words["sentence"] for x in weather_json["prefixer"]):
             print "weather"
             #return self.get_weather()
             result = requests.get("http://localhost:5000/weather").text

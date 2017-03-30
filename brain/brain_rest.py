@@ -3,11 +3,18 @@ from brain import brain
 
 app = Flask(__name__)
 br = brain()
-@app.route("/weather")
+@app.route("/weather", methods=['GET', "POST"])
 def weather():
-
-    w_stats = br.get_weather()
-    return w_stats
+    if request.method == "GET":
+        w_stats = br.get_weather()
+        return w_stats
+    elif request.method == "POST":
+        data = request.get_json()
+        data = data["sentence"].split()[-2:]
+        print data
+        data = ','.join(data)
+        w_stats = br.get_weather(data)
+        return w_stats
 
 @app.route("/twitter", methods = ['GET', 'POST'])
 def twitter():

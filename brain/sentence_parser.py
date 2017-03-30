@@ -11,12 +11,14 @@ class SentenceParser():
         with open ('data/weather/weather.json') as json_data:
             weather_json = json.load(json_data)
         #if 'weather' in words:
-        if any(x in words["sentence"] for x in weather_json["prefixer"]):
+        if any(x in words["sentence"].split() for x in weather_json["prefixer"]):
             print "weather"
-            #return self.get_weather()
-            result = requests.get("http://localhost:5000/weather").text
-            print result
-            return result
+            if any(x in words["sentence"].split() for x in weather_json["suffixer"]):
+                result = requests.get("http://localhost:5000/weather").text
+            else:
+                result = requests.post("http://localhost:5000/weather", data=json.dumps(words), headers=headers)
+            print result.text
+            return result.text
 
         elif 'twitter'  in words or 'tweet' in words:
             print "twitter"

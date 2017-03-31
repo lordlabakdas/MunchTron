@@ -17,19 +17,19 @@ cf.read('config.py')
 
 class brain:
 
-    def get_weather(self):
-        _owm_api_key_ = cf.get('owm', 'API_KEY')
-        owm = OWM(API_key=_owm_api_key_)
-        obs = owm.weather_at_place('Lawrence,US') # TODO: change hardcoded location
-        #print obs
-        w = obs.get_weather()
-        print w.get_temperature('fahrenheit')
-        print w.get_detailed_status()
-        stats = [w.get_temperature('fahrenheit'), w.get_detailed_status()]
-        words = "The temperature in fahrenheit is " + str(stats[0]["temp"]) + " and it is going to be " + stats[1]
-        return words
+    # def get_weather(self):
+    #     _owm_api_key_ = cf.get('owm', 'API_KEY')
+    #     owm = OWM(API_key=_owm_api_key_)
+    #     obs = owm.weather_at_place('Lawrence,US') # TODO: change hardcoded location
+    #     #print obs
+    #     w = obs.get_weather()
+    #     print w.get_temperature('fahrenheit')
+    #     print w.get_detailed_status()
+    #     stats = [w.get_temperature('fahrenheit'), w.get_detailed_status()]
+    #     words = "The temperature in fahrenheit is " + str(stats[0]["temp"]) + " and it is going to be " + stats[1]
+    #     return words
 
-    def get_weather(self, location):
+    def get_weather(self, location="Lawrence, KS"):
         _owm_api_key_ = cf.get('owm', 'API_KEY')
         owm = OWM(API_key=_owm_api_key_)
         #loc = location.replace(" ", ",")

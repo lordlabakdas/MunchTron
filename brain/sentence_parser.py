@@ -14,7 +14,7 @@ class SentenceParser():
         if any(x in words["sentence"].split() for x in weather_json["prefixer"]):
             print "weather"
             if any(x in words["sentence"].split() for x in weather_json["suffixer"]):
-                result = requests.get("http://localhost:5000/weather").text
+                result = requests.get("http://localhost:5000/weather")
             else:
                 result = requests.post("http://localhost:5000/weather", data=json.dumps(words), headers=headers)
             print result.text

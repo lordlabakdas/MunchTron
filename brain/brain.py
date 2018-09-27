@@ -1,5 +1,5 @@
 from pyowm import OWM
-import ConfigParser
+from configparser import ConfigParser
 import tweepy
 from skills.twitter import twitter
 import logging as log
@@ -9,7 +9,7 @@ import json
 from google.cloud import language
 import spotipy
 
-cf=ConfigParser.ConfigParser()
+cf=ConfigParser()
 cf.read('config.py')
 
 
@@ -20,10 +20,10 @@ class brain:
         _owm_api_key_ = cf.get('owm', 'API_KEY')
         owm = OWM(API_key=_owm_api_key_)
         obs = owm.weather_at_place('Lawrence,US') # TODO: change hardcoded location
-        print obs
+        print(obs)
         w = obs.get_weather()
-        print w.get_temperature('fahrenheit')
-        print w.get_detailed_status()
+        print(w.get_temperature('fahrenheit'))
+        print(w.get_detailed_status())
         stats = [w.get_temperature('fahrenheit'), w.get_detailed_status()]
         return stats
 
@@ -70,38 +70,38 @@ class brain:
 
 
     def parse_sentence(self, words):
-        print words + "parse_sentence"
+        print(words + "parse_sentence")
         if 'weather' in words:
             wstats = self.get_weather()
             return ("The temperature in fahrenheit is " + str(wstats[0]["temp"]) + " and it is going to be " + wstats[1])
         elif 'twitter'  in words or 'tweet' in words:
-            print "twitter"
+            print("twitter")
             return self.twitter(words)
         elif 'restaurants' in words or 'food' in words:
-            print "yelp"
+            print("yelp")
             return self.yelp(words)
         elif "play" in words:
-            print "spotify"
+            print("spotify")
             return self.spotify(words)
         else:
-            print None
+            print(None)
             return None
 
     def yelp(self, words):
-        print "yelp"
+        print("yelp")
         auth = Oauth1Authenticator(consumer_key=cf.get('yelp', 'ConsumerKey'),
                                 consumer_secret=cf.get('yelp','ConsumerSecret'),
                                 token=cf.get('yelp','Token'),
                                 token_secret=cf.get('yelp','TokenSecret'))
         client = Client(auth)
         if 'around me' or 'near me' in words:
-            print "yelp"
+            print("yelp")
             params = {
             "term": "food"
             }
             response = client.search('Lawrence', **params)
         text = "Some of the restaurants are " + response.businesses[0].name + " and " + response.businesses[1].name
-        print text
+        print(text)
         return text
 
 

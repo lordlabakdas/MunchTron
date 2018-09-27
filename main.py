@@ -1,10 +1,9 @@
-import os
 import time
 from slackclient import SlackClient
-import ConfigParser
+from configparser import ConfigParser
 from brain.brain import brain
 
-cf = ConfigParser.ConfigParser()
+cf = ConfigParser()
 cf.read("config.py")
 # starterbot's ID as an environment variable
 BOT_ID = cf.get("slack", "userID")
@@ -28,7 +27,7 @@ def handle_command(command, channel):
     if command.startswith(EXAMPLE_COMMAND):
         #response = "Sure...write some more code then I can do that!"
         br = brain()
-        print command
+        print(command)
         response = br.parse_sentence(command)
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)

@@ -11,7 +11,7 @@ class twitter (object):
         searched_tweets = [status for status in tweepy.Cursor(self.api.search, q=words).items(max_tweets)]
         tweets = []
         for status in searched_tweets:
-            print status.text
+            print(status.text)
             tweets.append(status.text)
         return tweets
 
@@ -19,6 +19,6 @@ class twitter (object):
         timeline = self.api.user_timeline(screen_name=words, include_rts=True, count=1)
         tweets = []
         for status in timeline:
-            print status.text
+            print(status.text)
             tweets.append(status.text)
         return tweets

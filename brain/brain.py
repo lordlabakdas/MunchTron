@@ -8,6 +8,7 @@ from yelp.oauth1_authenticator import Oauth1Authenticator
 import json
 from google.cloud import language
 import spotipy
+import urllib
 
 cf=ConfigParser()
 cf.read('config.py')
@@ -16,16 +17,36 @@ cf.read('config.py')
 
 class brain:
 
-    def get_weather(self):
+    # def get_weather(self):
+    #     _owm_api_key_ = cf.get('owm', 'API_KEY')
+    #     owm = OWM(API_key=_owm_api_key_)
+    #     obs = owm.weather_at_place('Lawrence,US') # TODO: change hardcoded location
+    #     #print obs
+    #     w = obs.get_weather()
+    #     print w.get_temperature('fahrenheit')
+    #     print w.get_detailed_status()
+    #     stats = [w.get_temperature('fahrenheit'), w.get_detailed_status()]
+    #     words = "The temperature in fahrenheit is " + str(stats[0]["temp"]) + " and it is going to be " + stats[1]
+    #     return words
+
+    def get_weather(self, location="Lawrence, KS"):
         _owm_api_key_ = cf.get('owm', 'API_KEY')
         owm = OWM(API_key=_owm_api_key_)
+<<<<<<< HEAD
         obs = owm.weather_at_place('Lawrence,US') # TODO: change hardcoded location
         print(obs)
+=======
+        #loc = location.replace(" ", ",")
+        #print loc
+        obs = owm.weather_at_place(location)
+        #print obs
+>>>>>>> slackbot
         w = obs.get_weather()
         print(w.get_temperature('fahrenheit'))
         print(w.get_detailed_status())
         stats = [w.get_temperature('fahrenheit'), w.get_detailed_status()]
-        return stats
+        words = "The temperature in fahrenheit is " + str(stats[0]["temp"]) + " and it is going to be " + stats[1]
+        return words
 
     def twitter(self, words):
         _twr_ck_ = cf.get('twitter', 'consumer_key')
@@ -57,6 +78,8 @@ class brain:
                 "Could not request results from Google Speech Recognition service; {0}".format(e))
 
     def sentiment_analysis(self,words):
+        print("Inside sentiment_analysis function")
+        words = words.replace('do ', '')
         language_client = language.Client()
         document = language_client.document_from_text(words)
         entities = document.analyze_entities()
@@ -67,8 +90,10 @@ class brain:
             print('wikipedia_url: %s' % (entity.wikipedia_url,))
             print('     metadata: %s' % (entity.metadata,))
             print('     salience: %s' % (entity.salience,))
+            print('=' * 20)
 
 
+<<<<<<< HEAD
     def parse_sentence(self, words):
         print(words + "parse_sentence")
         if 'weather' in words:
@@ -87,6 +112,8 @@ class brain:
             print(None)
             return None
 
+=======
+>>>>>>> slackbot
     def yelp(self, words):
         print("yelp")
         auth = Oauth1Authenticator(consumer_key=cf.get('yelp', 'ConsumerKey'),

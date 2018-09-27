@@ -32,15 +32,10 @@ class brain:
     def get_weather(self, location="Lawrence, KS"):
         _owm_api_key_ = cf.get('owm', 'API_KEY')
         owm = OWM(API_key=_owm_api_key_)
-<<<<<<< HEAD
-        obs = owm.weather_at_place('Lawrence,US') # TODO: change hardcoded location
-        print(obs)
-=======
         #loc = location.replace(" ", ",")
         #print loc
         obs = owm.weather_at_place(location)
         #print obs
->>>>>>> slackbot
         w = obs.get_weather()
         print(w.get_temperature('fahrenheit'))
         print(w.get_detailed_status())
@@ -93,27 +88,6 @@ class brain:
             print('=' * 20)
 
 
-<<<<<<< HEAD
-    def parse_sentence(self, words):
-        print(words + "parse_sentence")
-        if 'weather' in words:
-            wstats = self.get_weather()
-            return ("The temperature in fahrenheit is " + str(wstats[0]["temp"]) + " and it is going to be " + wstats[1])
-        elif 'twitter'  in words or 'tweet' in words:
-            print("twitter")
-            return self.twitter(words)
-        elif 'restaurants' in words or 'food' in words:
-            print("yelp")
-            return self.yelp(words)
-        elif "play" in words:
-            print("spotify")
-            return self.spotify(words)
-        else:
-            print(None)
-            return None
-
-=======
->>>>>>> slackbot
     def yelp(self, words):
         print("yelp")
         auth = Oauth1Authenticator(consumer_key=cf.get('yelp', 'ConsumerKey'),

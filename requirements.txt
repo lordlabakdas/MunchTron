@@ -1,0 +1,10 @@
+requests
+flask
+spotipy
+google
+yelp
+tweepy
+pyowm
+slackclient
+pyttsx
+pyaudio

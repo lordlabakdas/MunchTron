@@ -8,11 +8,10 @@ from yelp.oauth1_authenticator import Oauth1Authenticator
 import json
 from google.cloud import language
 import spotipy
-import urllib
 
-cf=ConfigParser()
-cf.read('config.py')
 
+cf = ConfigParser()
+cf.read("config.py")
 
 
 class brain:
@@ -30,88 +29,101 @@ class brain:
     #     return words
 
     def get_weather(self, location="Lawrence, KS"):
-        _owm_api_key_ = cf.get('owm', 'API_KEY')
+        _owm_api_key_ = cf.get("owm", "API_KEY")
         owm = OWM(API_key=_owm_api_key_)
-        #loc = location.replace(" ", ",")
-        #print loc
+        # loc = location.replace(" ", ",")
+        # print loc
         obs = owm.weather_at_place(location)
-        #print obs
+        # print obs
         w = obs.get_weather()
-        print(w.get_temperature('fahrenheit'))
+        print(w.get_temperature("fahrenheit"))
         print(w.get_detailed_status())
-        stats = [w.get_temperature('fahrenheit'), w.get_detailed_status()]
-        words = "The temperature in fahrenheit is " + str(stats[0]["temp"]) + " and it is going to be " + stats[1]
+        stats = [w.get_temperature("fahrenheit"), w.get_detailed_status()]
+        words = (
+            "The temperature in fahrenheit is "
+            + str(stats[0]["temp"])
+            + " and it is going to be "
+            + stats[1]
+        )
         return words
 
     def twitter(self, words):
-        _twr_ck_ = cf.get('twitter', 'consumer_key')
-        _twr_cs_ = cf.get('twitter', 'consumer_secret')
-        _twr_ak_ = cf.get('twitter', "access_key")
-        _twr_as_ = cf.get('twitter', 'access_secret')
-        auth = tweepy.OAuthHandler(_twr_ck_,_twr_cs_)
-        auth.set_access_token(_twr_ak_,_twr_as_)
+        _twr_ck_ = cf.get("twitter", "consumer_key")
+        _twr_cs_ = cf.get("twitter", "consumer_secret")
+        _twr_ak_ = cf.get("twitter", "access_key")
+        _twr_as_ = cf.get("twitter", "access_secret")
+        auth = tweepy.OAuthHandler(_twr_ck_, _twr_cs_)
+        auth.set_access_token(_twr_ak_, _twr_as_)
         api = tweepy.API(auth)
         tw = twitter(api)
         if "search" in words:
-            return tw.search(words.replace('search',''))
+            return tw.search(words.replace("search", ""))
         elif "user" in words:
-            words.replace('user', '')
-            words.replace('twitter','')
+            words.replace("user", "")
+            words.replace("twitter", "")
             log.info(words)
             return tw.user_tweets(words)
 
     def google_s2t_api(self, audio, sr, r):
-        with open('Speech.json') as json_file:
+        with open("Speech.json") as json_file:
             json_key = json.load(json_file)
         try:
-                words = r.recognize_google_cloud(audio, credentials_json=json.dumps(json_key))
-                return self.parse_sentence(words)
+            words = r.recognize_google_cloud(
+                audio, credentials_json=json.dumps(json_key)
+            )
+            return self.parse_sentence(words)
         except sr.UnknownValueError:
             print("Google Speech Recognition could not understand audio")
         except sr.RequestError as e:
             print(
-                "Could not request results from Google Speech Recognition service; {0}".format(e))
+                "Could not request results from Google Speech Recognition service; {0}".format(
+                    e
+                )
+            )
 
-    def sentiment_analysis(self,words):
+    def sentiment_analysis(self, words):
         print("Inside sentiment_analysis function")
-        words = words.replace('do ', '')
+        words = words.replace("do ", "")
         language_client = language.Client()
         document = language_client.document_from_text(words)
         entities = document.analyze_entities()
         for entity in entities:
-            print('=' * 20)
-            print('         name: %s' % (entity.name,))
-            print('         type: %s' % (entity.entity_type,))
-            print('wikipedia_url: %s' % (entity.wikipedia_url,))
-            print('     metadata: %s' % (entity.metadata,))
-            print('     salience: %s' % (entity.salience,))
-            print('=' * 20)
-
+            print("=" * 20)
+            print("         name: %s" % (entity.name,))
+            print("         type: %s" % (entity.entity_type,))
+            print("wikipedia_url: %s" % (entity.wikipedia_url,))
+            print("     metadata: %s" % (entity.metadata,))
+            print("     salience: %s" % (entity.salience,))
+            print("=" * 20)
 
     def yelp(self, words):
         print("yelp")
-        auth = Oauth1Authenticator(consumer_key=cf.get('yelp', 'ConsumerKey'),
-                                consumer_secret=cf.get('yelp','ConsumerSecret'),
-                                token=cf.get('yelp','Token'),
-                                token_secret=cf.get('yelp','TokenSecret'))
+        auth = Oauth1Authenticator(
+            consumer_key=cf.get("yelp", "ConsumerKey"),
+            consumer_secret=cf.get("yelp", "ConsumerSecret"),
+            token=cf.get("yelp", "Token"),
+            token_secret=cf.get("yelp", "TokenSecret"),
+        )
         client = Client(auth)
-        if 'around me' or 'near me' in words:
+        if "around me" or "near me" in words:
             print("yelp")
-            params = {
-            "term": "food"
-            }
-            response = client.search('Lawrence', **params)
-        text = "Some of the restaurants are " + response.businesses[0].name + " and " + response.businesses[1].name
+            params = {"term": "food"}
+            response = client.search("Lawrence", **params)
+        text = (
+            "Some of the restaurants are "
+            + response.businesses[0].name
+            + " and "
+            + response.businesses[1].name
+        )
         print(text)
         return text
 
-
-    def spotify (self,words):
-        w = words.replace('do play ','')
+    def spotify(self, words):
+        w = words.replace("do play ", "")
         sp = spotipy.Spotify()
-        results = sp.search(q='artist:' + w, type='artist')
-        items = results['artists']['items']
+        results = sp.search(q="artist:" + w, type="artist")
+        items = results["artists"]["items"]
         if len(items) > 0:
-            return items[0]["images"][0]['url']
+            return items[0]["images"][0]["url"]
         else:
             return None

@@ -1,129 +1,47 @@
-from pyowm import OWM
-from configparser import ConfigParser
-import tweepy
-from skills.twitter import twitter
-import logging as log
-from yelp.client import Client
-from yelp.oauth1_authenticator import Oauth1Authenticator
-import json
-from google.cloud import language
-import spotipy
+from flask import Flask, request
+from brain import brain
+
+app = Flask(__name__)
+br = brain()
 
 
-cf = ConfigParser()
-cf.read("config.py")
+@app.route("/weather", methods=["GET", "POST"])
+def weather():
+    if request.method == "GET":
+        w_stats = br.get_weather()
+        return w_stats
+    elif request.method == "POST":
+        data = request.get_json()
+        data = data["sentence"].split()[-2:]
+        print(data)
+        data = ",".join(data)
+        w_stats = br.get_weather(data)
+        return w_stats
 
 
-class brain:
+@app.route("/twitter", methods=["GET", "POST"])
+def twitter():
+    if request.method == "POST":
+        data = request.get_json()
+        print(data["sentence"])
+        return br.twitter(data["sentence"])[0]
 
-    # def get_weather(self):
-    #     _owm_api_key_ = cf.get('owm', 'API_KEY')
-    #     owm = OWM(API_key=_owm_api_key_)
-    #     obs = owm.weather_at_place('Lawrence,US') # TODO: change hardcoded location
-    #     #print obs
-    #     w = obs.get_weather()
-    #     print w.get_temperature('fahrenheit')
-    #     print w.get_detailed_status()
-    #     stats = [w.get_temperature('fahrenheit'), w.get_detailed_status()]
-    #     words = "The temperature in fahrenheit is " + str(stats[0]["temp"]) + " and it is going to be " + stats[1]
-    #     return words
 
-    def get_weather(self, location="Lawrence, KS"):
-        _owm_api_key_ = cf.get("owm", "API_KEY")
-        owm = OWM(API_key=_owm_api_key_)
-        # loc = location.replace(" ", ",")
-        # print loc
-        obs = owm.weather_at_place(location)
-        # print obs
-        w = obs.get_weather()
-        print(w.get_temperature("fahrenheit"))
-        print(w.get_detailed_status())
-        stats = [w.get_temperature("fahrenheit"), w.get_detailed_status()]
-        words = (
-            "The temperature in fahrenheit is "
-            + str(stats[0]["temp"])
-            + " and it is going to be "
-            + stats[1]
-        )
-        return words
+@app.route("/yelp", methods=["GET", "POST"])
+def yelp():
+    if request.method == "POST":
+        data = request.get_json()
+        print(data["sentence"])
+        return br.yelp(data["sentence"])
 
-    def twitter(self, words):
-        _twr_ck_ = cf.get("twitter", "consumer_key")
-        _twr_cs_ = cf.get("twitter", "consumer_secret")
-        _twr_ak_ = cf.get("twitter", "access_key")
-        _twr_as_ = cf.get("twitter", "access_secret")
-        auth = tweepy.OAuthHandler(_twr_ck_, _twr_cs_)
-        auth.set_access_token(_twr_ak_, _twr_as_)
-        api = tweepy.API(auth)
-        tw = twitter(api)
-        if "search" in words:
-            return tw.search(words.replace("search", ""))
-        elif "user" in words:
-            words.replace("user", "")
-            words.replace("twitter", "")
-            log.info(words)
-            return tw.user_tweets(words)
 
-    def google_s2t_api(self, audio, sr, r):
-        with open("Speech.json") as json_file:
-            json_key = json.load(json_file)
-        try:
-            words = r.recognize_google_cloud(
-                audio, credentials_json=json.dumps(json_key)
-            )
-            return self.parse_sentence(words)
-        except sr.UnknownValueError:
-            print("Google Speech Recognition could not understand audio")
-        except sr.RequestError as e:
-            print(
-                "Could not request results from Google Speech Recognition service; {0}".format(
-                    e
-                )
-            )
+@app.route("/spotify", methods=["GET", "POST"])
+def spotify():
+    if request.method == "POST":
+        data = request.get_json()
+        print(data["sentence"])
+        return br.spotify(data["sentence"])
 
-    def sentiment_analysis(self, words):
-        print("Inside sentiment_analysis function")
-        words = words.replace("do ", "")
-        language_client = language.Client()
-        document = language_client.document_from_text(words)
-        entities = document.analyze_entities()
-        for entity in entities:
-            print("=" * 20)
-            print("         name: %s" % (entity.name,))
-            print("         type: %s" % (entity.entity_type,))
-            print("wikipedia_url: %s" % (entity.wikipedia_url,))
-            print("     metadata: %s" % (entity.metadata,))
-            print("     salience: %s" % (entity.salience,))
-            print("=" * 20)
 
-    def yelp(self, words):
-        print("yelp")
-        auth = Oauth1Authenticator(
-            consumer_key=cf.get("yelp", "ConsumerKey"),
-            consumer_secret=cf.get("yelp", "ConsumerSecret"),
-            token=cf.get("yelp", "Token"),
-            token_secret=cf.get("yelp", "TokenSecret"),
-        )
-        client = Client(auth)
-        if "around me" or "near me" in words:
-            print("yelp")
-            params = {"term": "food"}
-            response = client.search("Lawrence", **params)
-        text = (
-            "Some of the restaurants are "
-            + response.businesses[0].name
-            + " and "
-            + response.businesses[1].name
-        )
-        print(text)
-        return text
-
-    def spotify(self, words):
-        w = words.replace("do play ", "")
-        sp = spotipy.Spotify()
-        results = sp.search(q="artist:" + w, type="artist")
-        items = results["artists"]["items"]
-        if len(items) > 0:
-            return items[0]["images"][0]["url"]
-        else:
-            return None
+if __name__ == "__main__":
+    app.run()
